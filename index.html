@@ -1,0 +1,1695 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GBP/USD Trade Record - Online Version</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* General Body and Container Styling for Smoke Grey Theme */
+        body {
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #1a1a1a;
+            min-height: 100vh;
+            color: #e0e0e0;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: #3a3a3a;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+            overflow: hidden;
+            border: 1px solid #444;
+        }
+        
+        /* Header Styling */
+        .header {
+            background: #1a1a1a;
+            color: white;
+            padding: 30px;
+            text-align: center;
+            position: relative;
+            border-bottom: 1px solid #444;
+        }
+        
+        .header h1 {
+            margin: 0;
+            font-size: 1.8em;
+            font-weight: 400;
+            color: #cccccc;
+        }
+        
+        .header p {
+            margin: 10px 0 0 0;
+            opacity: 0.8;
+            font-size: 1em;
+            color: #999999;
+        }
+        
+        /* Online Badge */
+        .online-badge {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: #28a745;
+            color: white;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .sync-status {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #28a745;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+        
+        /* Auth Section */
+        .auth-section {
+            padding: 20px 30px;
+            background: #2d2d2d;
+            border-bottom: 1px solid #444;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            color: #ffffff;
+        }
+        
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #555;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #ffffff;
+            font-weight: bold;
+            border: 2px solid #666;
+        }
+        
+        /* Controls Section */
+        .controls {
+            padding: 20px 30px;
+            background: #2a2a2a;
+            border-bottom: 1px solid #444;
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+        
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            font-size: 14px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+        }
+        
+        .btn-primary {
+            background: #007bff;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: #0056b3;
+            transform: translateY(-2px);
+        }
+        
+        .btn-success {
+            background: #28a745;
+            color: white;
+        }
+        
+        .btn-success:hover {
+            background: #1e7e34;
+            transform: translateY(-2px);
+        }
+        
+        .btn-danger {
+            background: #dc3545;
+            color: white;
+        }
+        
+        .btn-danger:hover {
+            background: #c82333;
+            transform: translateY(-2px);
+        }
+        
+        .btn-warning {
+            background: #ffc107;
+            color: #212529;
+        }
+        
+        .btn-warning:hover {
+            background: #e0a800;
+            transform: translateY(-2px);
+        }
+        
+        /* Table Styling */
+        .table-container {
+            padding: 30px;
+            overflow-x: auto;
+            background: #2d2d2d;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: #3a3a3a;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.6);
+            border: 1px solid #444;
+        }
+        
+        th {
+            background: #333333;
+            color: #ffffff;
+            padding: 15px 12px;
+            text-align: center;
+            font-weight: 600;
+            font-size: 14px;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            border-bottom: 2px solid #555;
+        }
+        
+        td {
+            padding: 12px;
+            text-align: center;
+            border-bottom: 1px solid #444;
+            font-size: 13px;
+            color: #ffffff;
+            background: rgba(255,255,255,0.02);
+        }
+        
+        tr:hover {
+            background-color: rgba(255,255,255,0.05);
+        }
+        
+        .profit {
+            color: #28a745;
+            font-weight: bold;
+        }
+        
+        .loss {
+            color: #dc3545;
+            font-weight: bold;
+        }
+        
+        .buy {
+            background: #2e7d32;
+            color: #a5d6a7;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-weight: bold;
+            border: 1px solid #4caf50;
+        }
+        
+        .sell {
+            background: #d32f2f;
+            color: #ffcdd2;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-weight: bold;
+            border: 1px solid #f44336;
+        }
+        
+        /* Stats Section */
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 15px;
+            padding: 30px;
+            background: #1a1a1a;
+        }
+        
+        .stat-card {
+            background: #3d3d3d;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.6);
+            transition: transform 0.3s ease;
+            border: 1px solid #444;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 35px rgba(0,0,0,0.8);
+        }
+        
+        .stat-value {
+            font-size: 2em;
+            font-weight: bold;
+            color: #ffffff;
+        }
+        
+        .stat-label {
+            color: #cccccc;
+            margin-top: 5px;
+            font-size: 14px;
+        }
+        
+        /* Performance Analysis Section */
+        .performance-section {
+            padding: 30px;
+            background: #2d2d2d;
+        }
+        
+        .performance-title {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #ffffff;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .performance-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .performance-card {
+            background: #3d3d3d;
+            padding: 20px;
+            border-radius: 10px;
+            border-left: 4px solid #007bff;
+            border: 1px solid #444;
+        }
+        
+        .performance-card.danger {
+            border-left-color: #dc3545;
+        }
+        
+        .performance-card.success {
+            border-left-color: #28a745;
+        }
+        
+        .performance-card.warning {
+            border-left-color: #ffc107;
+        }
+        
+        .performance-metric {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        
+        .metric-label {
+            font-weight: 500;
+            color: #cccccc;
+        }
+        
+        .metric-value {
+            font-weight: bold;
+            font-size: 1.1em;
+            color: #ffffff;
+        }
+        
+        /* Chart Section */
+        .chart-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-top: 30px;
+        }
+        
+        .chart-card {
+            background: #3d3d3d;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.6);
+            border: 1px solid #444;
+        }
+        
+        .chart-title {
+            font-weight: bold;
+            margin-bottom: 15px;
+            text-align: center;
+            color: #ffffff;
+        }
+        
+        .equity-curve {
+            width: 100%;
+            height: 200px;
+            border: 1px solid #555;
+            border-radius: 5px;
+            background: #2a2a2a;
+        }
+        
+        /* Form Controls */
+        .input-group {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        
+        .form-control {
+            padding: 8px 12px;
+            border: 1px solid #555;
+            border-radius: 5px;
+            font-size: 14px;
+            background: #3d3d3d;
+            color: #ffffff;
+        }
+        
+        .form-control:focus {
+            outline: none;
+            border-color: #007bff;
+            box-shadow: 0 0 0 2px rgba(0,123,255,0.25);
+        }
+        
+        select.form-control {
+            cursor: pointer;
+        }
+        
+        /* Loading Indicator */
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #007bff;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* Notification System */
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 20px;
+            border-radius: 8px;
+            color: white;
+            font-weight: bold;
+            z-index: 1000;
+            opacity: 0;
+            transform: translateX(100%);
+            transition: all 0.3s ease;
+        }
+        
+        .notification.show {
+            opacity: 1;
+            transform: translateX(0);
+        }
+        
+        .notification.success {
+            background: #28a745;
+        }
+        
+        .notification.error {
+            background: #dc3545;
+        }
+        
+        /* Responsive Adjustments */
+        @media (max-width: 768px) {
+            .chart-container {
+                grid-template-columns: 1fr;
+            }
+            .performance-grid {
+                grid-template-columns: 1fr;
+            }
+            .auth-section {
+                flex-direction: column;
+                gap: 15px;
+            }
+            .input-group {
+                flex-direction: column;
+                width: 100%;
+            }
+            .input-group > div {
+                width: 100% !important;
+            }
+            .form-control {
+                width: 100%;
+            }
+        }
+
+        /* Firebase Config Modal */
+        .config-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 3000;
+        }
+
+        .config-modal-content {
+            background: #3a3a3a;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+            color: white;
+            max-width: 600px;
+            width: 90%;
+        }
+
+        .config-modal h2 {
+            margin-top: 0;
+            color: #cccccc;
+        }
+
+        .config-modal textarea {
+            width: 100%;
+            height: 200px;
+            background: #2a2a2a;
+            color: #ffffff;
+            border: 1px solid #555;
+            border-radius: 5px;
+            padding: 10px;
+            font-family: monospace;
+            margin: 10px 0;
+        }
+
+        .config-modal .btn-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="online-badge">
+                <div class="sync-status"></div>
+                <span id="connectionStatus">Online</span>
+            </div>
+            <h1>📊 GBP/USD Trade Record</h1>
+            <p>EA Range Trading System - Online Version with Cloud Sync</p>
+        </div>
+        
+        <div class="auth-section">
+            <div class="user-info">
+                <div class="user-avatar" id="userAvatar">T</div>
+                <div>
+                    <div style="font-weight: bold;" id="userName">Trader User</div>
+                    <div style="font-size: 14px; color: #666;" id="userEmail">trader@example.com</div>
+                    <div style="font-size: 12px; color: #999;">User ID: <span id="currentUserId">Loading...</span></div>
+                </div>
+            </div>
+            <div>
+                <button class="btn btn-warning" onclick="showSettings()">⚙️ Settings</button>
+                <button class="btn btn-danger" onclick="signOut()">🚪 Sign Out</button>
+            </div>
+        </div>
+        
+        <div class="controls">
+            <div class="input-group" style="width: 100%; margin-bottom: 15px;">
+                <div style="display: flex; align-items: center; gap: 10px; padding: 10px; background: #3d3d3d; border-radius: 8px; width: 100%; border: 1px solid #555;">
+                    <label style="font-weight: bold; color: #cccccc;">💰 Initial Bankroll:</label>
+                    <input type="number" id="initialBankroll" placeholder="10000" step="100" value="10000" class="form-control" style="width: 150px;" onchange="updateBankroll()">
+                    <span style="font-weight: bold; color: #cccccc;">Current Balance:</span>
+                    <span id="currentBalance" style="font-weight: bold; font-size: 1.2em; color: #ffffff;">$10,000.00</span>
+                    <span style="color: #999;">ROI:</span>
+                    <span id="totalROI" style="font-weight: bold; font-size: 1.1em; color: #28a745;">0.00%</span>
+                    <div class="loading" id="syncIndicator" style="display: none;"></div>
+                </div>
+            </div>
+            <div class="input-group">
+                <input type="datetime-local" id="entryTime" class="form-control">
+                <select id="tradeType" class="form-control">
+                    <option value="BUY">BUY</option>
+                    <option value="SELL">SELL</option>
+                </select>
+                <input type="number" id="entryPrice" placeholder="Entry Price" step="0.00001" class="form-control">
+                <input type="number" id="lotSize" placeholder="Lot Size" step="0.01" value="0.01" class="form-control">
+                <input type="number" id="stopLoss" placeholder="Stop Loss" step="0.00001" class="form-control">
+                <input type="number" id="takeProfit" placeholder="Take Profit" step="0.00001" class="form-control">
+            </div>
+            <button class="btn btn-primary" onclick="addTrade()">
+                <span id="addTradeText">Add Trade</span>
+                <div class="loading" id="addTradeLoading" style="display: none;"></div>
+            </button>
+            <button class="btn btn-success" onclick="exportToCSV()">📁 Export CSV</button>
+            <button class="btn btn-warning" onclick="syncData()">🔄 Sync Now</button>
+            <button class="btn btn-danger" onclick="clearAllTrades()">🗑️ Clear All</button>
+        </div>
+        
+        <div class="stats">
+            <div class="stat-card">
+                <div class="stat-value" id="totalTrades">0</div>
+                <div class="stat-label">Total Trades</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value profit" id="totalProfit">$0.00</div>
+                <div class="stat-label">Total P&L</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="totalROIPercent">0.00%</div>
+                <div class="stat-label">Total ROI</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="winRate">0%</div>
+                <div class="stat-label">Win Rate</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="avgTrade">$0.00</div>
+                <div class="stat-label">Avg Trade</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="avgTradePercent">0.00%</div>
+                <div class="stat-label">Avg Trade %</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="maxDrawdown">0%</div>
+                <div class="stat-label">Max Drawdown</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="profitFactor">0.00</div>
+                <div class="stat-label">Profit Factor</div>
+            </div>
+        </div>
+
+        <div class="performance-section">
+            <div class="performance-title">📈 Performance Analysis</div>
+            
+            <div class="performance-grid">
+                <div class="performance-card success">
+                    <div class="performance-metric">
+                        <span class="metric-label">🎯 Expected Value (EV)</span>
+                        <span class="metric-value" id="expectedValue">$0.00</span>
+                    </div>
+                    <div class="performance-metric">
+                        <span class="metric-label">📊 EV Percentage</span>
+                        <span class="metric-value" id="expectedValuePercent">0.00%</span>
+                    </div>
+                    <div class="performance-metric">
+                        <span class="metric-label">💰 Average Win</span>
+                        <span class="metric-value profit" id="avgWin">$0.00</span>
+                    </div>
+                    <div class="performance-metric">
+                        <span class="metric-label">📈 Avg Win %</span>
+                        <span class="metric-value profit" id="avgWinPercent">0.00%</span>
+                    </div>
+                    <div class="performance-metric">
+                        <span class="metric-label">📊 Win Streak (Max)</span>
+                        <span class="metric-value" id="maxWinStreak">0</span>
+                    </div>
+                </div>
+
+                <div class="performance-card danger">
+                    <div class="performance-metric">
+                        <span class="metric-label">💸 Average Loss</span>
+                        <span class="metric-value loss" id="avgLoss">$0.00</span>
+                    </div>
+                    <div class="performance-metric">
+                        <span class="metric-label">📉 Avg Loss %</span>
+                        <span class="metric-value loss" id="avgLossPercent">0.00%</span>
+                    </div>
+                    <div class="performance-metric">
+                        <span class="metric-label">📉 Loss Streak (Max)</span>
+                        <span class="metric-value" id="maxLossStreak">0</span>
+                    </div>
+                    <div class="performance-metric">
+                        <span class="metric-label">⚠️ Risk of Ruin</span>
+                        <span class="metric-value" id="riskOfRuin">0%</span>
+                    </div>
+                    <div class="performance-metric">
+                        <span class="metric-label">💔 Worst Trade</span>
+                        <span class="metric-value loss" id="worstTrade">$0.00</span>
+                    </div>
+                </div>
+
+                <div class="performance-card warning">
+                    <div class="performance-metric">
+                        <span class="metric-label">⚖️ Risk/Reward Ratio</span>
+                        <span class="metric-value" id="riskReward">1:0</span>
+                    </div>
+                    <div class="performance-metric">
+                        <span class="metric-label">📈 Sharpe Ratio</span>
+                        <span class="metric-value" id="sharpeRatio">0.00</span>
+                    </div>
+                    <div class="performance-metric">
+                        <span class="metric-label">🔄 Recovery Factor</span>
+                        <span class="metric-value" id="recoveryFactor">0.00</span>
+                    </div>
+                    <div class="performance-metric">
+                        <span class="metric-label">📊 Balance Peak</span>
+                        <span class="metric-value profit" id="balancePeak">$0.00</span>
+                    </div>
+                    <div class="performance-metric">
+                        <span class="metric-label">📉 Balance Low</span>
+                        <span class="metric-value" id="balanceLow">$0.00</span>
+                    </div>
+                </div>
+
+                <div class="performance-card">
+                    <div class="performance-metric">
+                        <span class="metric-label">📅 Trading Days</span>
+                        <span class="metric-value" id="tradingDays">0</span>
+                    </div>
+                    <div class="performance-metric">
+                        <span class="metric-label">📊 Trades/Day</span>
+                        <span class="metric-value" id="tradesPerDay">0.00</span>
+                    </div>
+                    <div class="performance-metric">
+                        <span class="metric-label">💹 Best Trade</span>
+                        <span class="metric-value profit" id="bestTrade">$0.00</span>
+                    </div>
+                    <div class="performance-metric">
+                        <span class="metric-label">🏆 Best Trade %</span>
+                        <span class="metric-value profit" id="bestTradePercent">0.00%</span>
+                    </div>
+                    <div class="performance-metric">
+                        <span class="metric-label">💰 Monthly ROI</span>
+                        <span class="metric-value" id="monthlyROI">0.00%</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="chart-container">
+                <div class="chart-card">
+                    <div class="chart-title">📈 Equity Curve</div>
+                    <canvas id="equityChart" class="equity-curve"></canvas>
+                </div>
+                <div class="chart-card">
+                    <div class="chart-title">📊 Monthly Performance</div>
+                    <canvas id="monthlyChart" class="equity-curve"></canvas>
+                </div>
+            </div>
+        </div>
+        
+        <div class="table-container">
+            <table id="tradesTable">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Date/Time</th>
+                        <th>Type</th>
+                        <th>Entry Price</th>
+                        <th>Exit Price</th>
+                        <th>Lot Size</th>
+                        <th>Stop Loss</th>
+                        <th>Take Profit</th>
+                        <th>P&L (Pips)</th>
+                        <th>P&L ($)</th>
+                        <th>P&L (%)</th>
+                        <th>Balance</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody id="tradesBody">
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Notification -->
+    <div id="notification" class="notification"></div>
+
+    <!-- Firebase Config Modal -->
+    <div id="configModal" class="config-modal" style="display: none;">
+        <div class="config-modal-content">
+            <h2>🔧 Firebase Configuration</h2>
+            <p>Please enter your Firebase configuration:</p>
+            <textarea id="firebaseConfigInput" placeholder='Paste your Firebase config object here...
+Example:
+{
+  "apiKey": "your-api-key",
+  "authDomain": "your-auth-domain",
+  "projectId": "your-project-id",
+  "storageBucket": "your-storage-bucket",
+  "messagingSenderId": "your-sender-id",
+  "appId": "your-app-id"
+}'></textarea>
+            <div class="btn-group">
+                <button class="btn btn-success" onclick="saveFirebaseConfig()">Save Configuration</button>
+                <button class="btn btn-primary" onclick="useLocalStorage()">Use Local Storage Only</button>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        // Firebase imports
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+        import { getAuth, signInAnonymously, onAuthStateChanged, signOut as firebaseSignOut } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+        import { getFirestore, doc, setDoc, updateDoc, deleteDoc, onSnapshot, collection, query, getDoc, getDocs, addDoc } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+
+        // Global variables
+        let app, db, auth;
+        let trades = [];
+        let initialBankroll = 10000;
+        let currentUser = {
+            name: 'Guest User',
+            email: 'guest@example.com',
+            avatar: 'G',
+            uid: null
+        };
+        let unsubscribeFromTrades = null;
+        let unsubscribeFromUserData = null;
+        let useLocalStorageOnly = false;
+
+        // Check for existing Firebase config
+        const savedConfig = localStorage.getItem('firebaseConfig');
+        if (savedConfig) {
+            try {
+                const firebaseConfig = JSON.parse(savedConfig);
+                initializeFirebase(firebaseConfig);
+            } catch (error) {
+                console.error("Error parsing saved Firebase config:", error);
+                showConfigModal();
+            }
+        } else {
+            showConfigModal();
+        }
+
+        function showConfigModal() {
+            document.getElementById('configModal').style.display = 'flex';
+        }
+
+        function hideConfigModal() {
+            document.getElementById('configModal').style.display = 'none';
+        }
+
+        window.saveFirebaseConfig = function() {
+            const configInput = document.getElementById('firebaseConfigInput').value;
+            try {
+                const firebaseConfig = JSON.parse(configInput);
+                localStorage.setItem('firebaseConfig', configInput);
+                initializeFirebase(firebaseConfig);
+                hideConfigModal();
+                showNotification('✅ Firebase configuration saved!');
+            } catch (error) {
+                showNotification('❌ Invalid Firebase configuration. Please check your input.', 'error');
+            }
+        };
+
+        window.useLocalStorage = function() {
+            useLocalStorageOnly = true;
+            hideConfigModal();
+            loadLocalData();
+            updateConnectionStatus();
+            showNotification('📦 Using local storage only mode');
+        };
+
+        function initializeFirebase(firebaseConfig) {
+            try {
+                app = initializeApp(firebaseConfig);
+                db = getFirestore(app);
+                auth = getAuth(app);
+                
+                // Set up auth state listener
+                onAuthStateChanged(auth, async (user) => {
+                    if (user) {
+                        currentUser.uid = user.uid;
+                        if (user.isAnonymous) {
+                            currentUser.name = `User ${user.uid.substring(0, 6)}`;
+                            currentUser.email = `anonymous-${user.uid.substring(0, 6)}@example.com`;
+                            currentUser.avatar = currentUser.name.charAt(0).toUpperCase();
+                        } else {
+                            currentUser.name = user.displayName || `User ${user.uid.substring(0, 6)}`;
+                            currentUser.email = user.email || `user-${user.uid.substring(0, 6)}@example.com`;
+                            currentUser.avatar = currentUser.name.charAt(0).toUpperCase();
+                        }
+                        updateUserDisplay();
+                        loadDataFromFirestore();
+                        showNotification('✅ Signed in and data loaded!');
+                    } else {
+                        resetToGuest();
+                        showNotification('🚪 Signed out or no user logged in.');
+                    }
+                    updateConnectionStatus();
+                });
+
+                // Auto sign in anonymously
+                signInAnonymously(auth).catch(error => {
+                    console.error("Error signing in anonymously:", error);
+                    showNotification('❌ Failed to sign in. Check your network connection.', 'error');
+                });
+            } catch (error) {
+                console.error("Error initializing Firebase:", error);
+                showNotification('❌ Failed to initialize Firebase. Please check your configuration.', 'error');
+            }
+        }
+
+        function resetToGuest() {
+            currentUser.uid = null;
+            currentUser.name = 'Guest User';
+            currentUser.email = 'guest@example.com';
+            currentUser.avatar = 'G';
+            updateUserDisplay();
+            resetStats();
+            trades = [];
+            updateTable();
+            initialBankroll = 10000;
+            document.getElementById('initialBankroll').value = initialBankroll;
+            updateBankrollDisplay();
+            if (unsubscribeFromTrades) {
+                unsubscribeFromTrades();
+                unsubscribeFromTrades = null;
+            }
+            if (unsubscribeFromUserData) {
+                unsubscribeFromUserData();
+                unsubscribeFromUserData = null;
+            }
+        }
+
+        // Local Storage Functions
+        function saveToLocalStorage() {
+            const data = {
+                trades: trades,
+                initialBankroll: initialBankroll,
+                user: currentUser
+            };
+            localStorage.setItem('forexTradeData', JSON.stringify(data));
+        }
+
+        function loadLocalData() {
+            const savedData = localStorage.getItem('forexTradeData');
+            if (savedData) {
+                try {
+                    const data = JSON.parse(savedData);
+                    trades = data.trades || [];
+                    initialBankroll = data.initialBankroll || 10000;
+                    if (data.user && !currentUser.uid) {
+                        currentUser = data.user;
+                    }
+                    document.getElementById('initialBankroll').value = initialBankroll;
+                    updateUserDisplay();
+                    updateTable();
+                    updateStats();
+                    updateBankrollDisplay();
+                } catch (error) {
+                    console.error("Error loading local data:", error);
+                }
+            }
+        }
+
+        // Notification System
+        function showNotification(message, type = 'success') {
+            const notification = document.getElementById('notification');
+            notification.textContent = message;
+            notification.className = `notification ${type}`;
+            notification.classList.add('show');
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
+        }
+
+        // Firebase Data Functions
+        function loadDataFromFirestore() {
+            if (!currentUser.uid || useLocalStorageOnly) {
+                console.warn("No user ID available or using local storage only.");
+                return;
+            }
+
+            const userDocRef = doc(db, `users/${currentUser.uid}/settings/user_data`);
+            const tradesCollectionRef = collection(db, `users/${currentUser.uid}/trades`);
+
+            if (unsubscribeFromUserData) {
+                unsubscribeFromUserData();
+            }
+            unsubscribeFromUserData = onSnapshot(userDocRef, (docSnap) => {
+                if (docSnap.exists()) {
+                    const data = docSnap.data();
+                    if (data.name) currentUser.name = data.name;
+                    if (data.email) currentUser.email = data.email;
+                    if (data.avatar) currentUser.avatar = data.avatar;
+                    if (data.initialBankroll) initialBankroll = data.initialBankroll;
+                    document.getElementById('initialBankroll').value = initialBankroll;
+                } else {
+                    setDoc(userDocRef, {
+                        name: currentUser.name,
+                        email: currentUser.email,
+                        avatar: currentUser.avatar,
+                        initialBankroll: initialBankroll
+                    }).catch(error => {
+                        console.error("Error creating initial user data:", error);
+                    });
+                }
+                updateUserDisplay();
+                updateBankrollDisplay();
+            }, (error) => {
+                console.error("Error listening to user settings:", error);
+                showNotification('❌ Real-time user settings updates failed.', 'error');
+            });
+
+            if (unsubscribeFromTrades) {
+                unsubscribeFromTrades();
+            }
+            unsubscribeFromTrades = onSnapshot(query(tradesCollectionRef), (snapshot) => {
+                const fetchedTrades = [];
+                snapshot.forEach(doc => {
+                    fetchedTrades.push({ id: doc.id, ...doc.data() });
+                });
+                trades = fetchedTrades.sort((a, b) => new Date(a.entryTime) - new Date(b.entryTime));
+                updateTable();
+                updateStats();
+                updateBankrollDisplay();
+                showNotification('🔄 Trades updated in real-time!');
+            }, (error) => {
+                console.error("Error listening to trades:", error);
+                showNotification('❌ Real-time trade updates failed.', 'error');
+            });
+        }
+
+        async function saveUserDataToFirestore() {
+            if (!currentUser.uid || useLocalStorageOnly) {
+                saveToLocalStorage();
+                return;
+            }
+            const userDocRef = doc(db, `users/${currentUser.uid}/settings/user_data`);
+            try {
+                await setDoc(userDocRef, {
+                    name: currentUser.name,
+                    email: currentUser.email,
+                    avatar: currentUser.avatar,
+                    initialBankroll: initialBankroll
+                }, { merge: true });
+                showNotification('✅ User settings saved to cloud!');
+            } catch (error) {
+                console.error("Error saving user data:", error);
+                showNotification('❌ Failed to save user settings to cloud.', 'error');
+            }
+        }
+
+        // Trade Management Functions
+        window.addTrade = async function() {
+            const entryTime = document.getElementById('entryTime').value;
+            const tradeType = document.getElementById('tradeType').value;
+            const entryPrice = parseFloat(document.getElementById('entryPrice').value);
+            const lotSize = parseFloat(document.getElementById('lotSize').value);
+            const stopLoss = parseFloat(document.getElementById('stopLoss').value);
+            const takeProfit = parseFloat(document.getElementById('takeProfit').value);
+
+            if (!entryTime || isNaN(entryPrice) || isNaN(lotSize)) {
+                showNotification('❌ Please fill in all required fields (Entry Time, Entry Price, Lot Size).', 'error');
+                return;
+            }
+            if (entryPrice <= 0 || lotSize <= 0) {
+                showNotification('❌ Entry Price and Lot Size must be greater than zero.', 'error');
+                return;
+            }
+
+            document.getElementById('addTradeText').style.display = 'none';
+            document.getElementById('addTradeLoading').style.display = 'inline-block';
+
+            const newTradeData = {
+                id: Date.now().toString(),
+                entryTime: entryTime,
+                type: tradeType,
+                entryPrice: entryPrice,
+                exitPrice: null,
+                lotSize: lotSize,
+                stopLoss: stopLoss || null,
+                takeProfit: takeProfit || null,
+                pips: null,
+                pnl: null,
+                status: 'Open',
+                createdAt: new Date().toISOString()
+            };
+
+            if (useLocalStorageOnly || !currentUser.uid) {
+                trades.push(newTradeData);
+                saveToLocalStorage();
+                updateTable();
+                updateStats();
+                showNotification('✅ Trade added successfully!');
+                clearForm();
+            } else {
+                try {
+                    const docRef = await addDoc(collection(db, `users/${currentUser.uid}/trades`), newTradeData);
+                    showNotification('✅ Trade added successfully!');
+                    clearForm();
+                } catch (error) {
+                    console.error("Error adding trade:", error);
+                    showNotification('❌ Failed to add trade. Please try again.', 'error');
+                }
+            }
+
+            document.getElementById('addTradeText').style.display = 'inline';
+            document.getElementById('addTradeLoading').style.display = 'none';
+        };
+
+        window.closeTrade = async function(tradeId, exitPrice) {
+            const trade = trades.find(t => t.id === tradeId);
+            if (!trade) {
+                showNotification('❌ Trade not found.', 'error');
+                return;
+            }
+
+            const pips = trade.type === 'BUY' ?
+                ((exitPrice - trade.entryPrice) * 10000).toFixed(1) :
+                ((trade.entryPrice - exitPrice) * 10000).toFixed(1);
+            const pnl = (parseFloat(pips) * trade.lotSize * 10).toFixed(2);
+
+            const updateData = {
+                exitPrice: exitPrice,
+                status: 'Closed',
+                pips: parseFloat(pips),
+                pnl: parseFloat(pnl),
+                closedAt: new Date().toISOString()
+            };
+
+            if (useLocalStorageOnly || !currentUser.uid) {
+                Object.assign(trade, updateData);
+                saveToLocalStorage();
+                updateTable();
+                updateStats();
+                showNotification('✅ Trade closed successfully!');
+            } else {
+                try {
+                    await updateDoc(doc(db, `users/${currentUser.uid}/trades`, tradeId), updateData);
+                    showNotification('✅ Trade closed successfully!');
+                } catch (error) {
+                    console.error("Error closing trade:", error);
+                    showNotification('❌ Failed to close trade. Please try again.', 'error');
+                }
+            }
+        };
+
+        window.deleteTrade = async function(tradeId) {
+            showConfirmModal('Are you sure you want to delete this trade?', async () => {
+                if (useLocalStorageOnly || !currentUser.uid) {
+                    trades = trades.filter(t => t.id !== tradeId);
+                    saveToLocalStorage();
+                    updateTable();
+                    updateStats();
+                    showNotification('✅ Trade deleted successfully!');
+                } else {
+                    try {
+                        await deleteDoc(doc(db, `users/${currentUser.uid}/trades`, tradeId));
+                        showNotification('✅ Trade deleted successfully!');
+                    } catch (error) {
+                        console.error("Error deleting trade:", error);
+                        showNotification('❌ Failed to delete trade. Please try again.', 'error');
+                    }
+                }
+            });
+        };
+
+        window.clearAllTrades = async function() {
+            showConfirmModal('Are you sure you want to delete ALL trades? This action cannot be undone.', async () => {
+                if (useLocalStorageOnly || !currentUser.uid) {
+                    trades = [];
+                    initialBankroll = 10000;
+                    document.getElementById('initialBankroll').value = initialBankroll;
+                    saveToLocalStorage();
+                    updateTable();
+                    updateStats();
+                    updateBankrollDisplay();
+                    showNotification('✅ All trades cleared!');
+                } else {
+                    try {
+                        const tradesCollectionRef = collection(db, `users/${currentUser.uid}/trades`);
+                        const q = query(tradesCollectionRef);
+                        const querySnapshot = await getDocs(q);
+                        
+                        const deletePromises = [];
+                        querySnapshot.forEach((doc) => {
+                            deletePromises.push(deleteDoc(doc.ref));
+                        });
+                        await Promise.all(deletePromises);
+
+                        const userDocRef = doc(db, `users/${currentUser.uid}/settings/user_data`);
+                        await setDoc(userDocRef, { 
+                            initialBankroll: 10000, 
+                            name: currentUser.name, 
+                            email: currentUser.email, 
+                            avatar: currentUser.avatar 
+                        });
+                        
+                        showNotification('✅ All trades cleared!');
+                    } catch (error) {
+                        console.error("Error clearing all trades:", error);
+                        showNotification('❌ Failed to clear all trades. Please try again.', 'error');
+                    }
+                }
+            });
+        };
+
+        // UI Update Functions
+        function updateTable() {
+            const tbody = document.getElementById('tradesBody');
+            tbody.innerHTML = '';
+            let runningBalance = initialBankroll;
+
+            trades.forEach(trade => {
+                const row = document.createElement('tr');
+                const pnlClass = trade.pnl > 0 ? 'profit' : trade.pnl < 0 ? 'loss' : '';
+                
+                if (trade.status === 'Closed' && trade.pnl !== null) {
+                    runningBalance += parseFloat(trade.pnl);
+                }
+                const pnlPercent = initialBankroll > 0 && trade.pnl !== null ? ((parseFloat(trade.pnl) / initialBankroll) * 100).toFixed(2) : '0.00';
+                row.innerHTML = `
+                    <td>${trade.id.substring(0, 6)}...</td>
+                    <td>${new Date(trade.entryTime).toLocaleString('en-US')}</td>
+                    <td><span class="${trade.type.toLowerCase()}">${trade.type}</span></td>
+                    <td>${trade.entryPrice.toFixed(5)}</td>
+                    <td>${trade.exitPrice !== null ? trade.exitPrice.toFixed(5) : '-'}</td>
+                    <td>${trade.lotSize.toFixed(2)}</td>
+                    <td>${trade.stopLoss !== null ? trade.stopLoss.toFixed(5) : '-'}</td>
+                    <td>${trade.takeProfit !== null ? trade.takeProfit.toFixed(5) : '-'}</td>
+                    <td>${trade.pips !== null ? trade.pips : '-'}</td>
+                    <td class="${pnlClass}">${trade.pnl !== null ? ' + parseFloat(trade.pnl).toFixed(2) : '-'}</td>
+                    <td class="${pnlClass}">${pnlPercent ? pnlPercent + '%' : '-'}</td>
+                    <td>${trade.status === 'Closed' ? ' + runningBalance.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2}) : '-'}</td>
+                    <td>${trade.status}</td>
+                    <td>
+                        ${trade.status === 'Open' ? 
+                            `<button class="btn btn-success" onclick="closeTradePrompt('${trade.id}')" style="padding: 5px 10px; font-size: 12px;">Close</button>` : 
+                            ''
+                        }
+                        <button class="btn btn-danger" onclick="deleteTrade('${trade.id}')" style="padding: 5px 10px; font-size: 12px;">Delete</button>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        function updateStats() {
+            const closedTrades = trades.filter(t => t.status === 'Closed');
+            const totalTrades = closedTrades.length;
+            
+            if (totalTrades === 0) {
+                resetStats();
+                return;
+            }
+
+            const totalProfit = closedTrades.reduce((sum, t) => sum + parseFloat(t.pnl || 0), 0);
+            const totalROIPercent = initialBankroll > 0 ? ((totalProfit / initialBankroll) * 100) : 0;
+            const winningTrades = closedTrades.filter(t => parseFloat(t.pnl || 0) > 0);
+            const losingTrades = closedTrades.filter(t => parseFloat(t.pnl || 0) < 0);
+            const winRate = ((winningTrades.length / totalTrades) * 100).toFixed(1);
+            const avgTrade = (totalProfit / totalTrades).toFixed(2);
+            const avgTradePercent = initialBankroll > 0 ? ((parseFloat(avgTrade) / initialBankroll) * 100).toFixed(2) : 0;
+
+            const avgWin = winningTrades.length > 0 ? 
+                (winningTrades.reduce((sum, t) => sum + parseFloat(t.pnl), 0) / winningTrades.length).toFixed(2) : 0;
+            const avgWinPercent = initialBankroll > 0 ? ((parseFloat(avgWin) / initialBankroll) * 100).toFixed(2) : 0;
+            const avgLoss = losingTrades.length > 0 ? 
+                Math.abs(losingTrades.reduce((sum, t) => sum + parseFloat(t.pnl), 0) / losingTrades.length).toFixed(2) : 0;
+            const avgLossPercent = initialBankroll > 0 ? ((parseFloat(avgLoss) / initialBankroll) * 100).toFixed(2) : 0;
+
+            const winProb = winningTrades.length / totalTrades;
+            const lossProb = losingTrades.length / totalTrades;
+            const expectedValue = (winProb * parseFloat(avgWin) - lossProb * parseFloat(avgLoss)).toFixed(2);
+            const expectedValuePercent = initialBankroll > 0 ? ((parseFloat(expectedValue) / initialBankroll) * 100).toFixed(2) : 0;
+
+            const riskReward = avgLoss > 0 ? `1:${(parseFloat(avgWin) / parseFloat(avgLoss)).toFixed(2)}` : '1:0';
+            const grossProfit = winningTrades.reduce((sum, t) => sum + parseFloat(t.pnl), 0);
+            const grossLoss = Math.abs(losingTrades.reduce((sum, t) => sum + parseFloat(t.pnl), 0));
+            const profitFactor = grossLoss > 0 ? (grossProfit / grossLoss).toFixed(2) : '∞';
+
+            const balanceHistory = [];
+            let runningBalance = initialBankroll;
+            balanceHistory.push(runningBalance);
+            
+            closedTrades.forEach(trade => {
+                runningBalance += parseFloat(trade.pnl);
+                balanceHistory.push(runningBalance);
+            });
+            
+            let maxDrawdown = 0;
+            let peak = balanceHistory[0];
+            let balancePeak = initialBankroll;
+            let balanceLow = initialBankroll;
+            
+            balanceHistory.forEach(balance => {
+                if (balance > peak) peak = balance;
+                if (balance > balancePeak) balancePeak = balance;
+                if (balance < balanceLow) balanceLow = balance;
+                const drawdown = ((peak - balance) / peak) * 100;
+                if (drawdown > maxDrawdown) maxDrawdown = drawdown;
+            });
+
+            const streaks = calculateStreaks(closedTrades);
+            const tradingDaysCount = calculateTradingDays(closedTrades);
+            const tradesPerDay = tradingDaysCount > 0 ? (totalTrades / tradingDaysCount).toFixed(2) : 0;
+            const bestTrade = closedTrades.length > 0 ? Math.max(...closedTrades.map(t => parseFloat(t.pnl))).toFixed(2) : 0;
+            const worstTrade = closedTrades.length > 0 ? Math.min(...closedTrades.map(t => parseFloat(t.pnl))).toFixed(2) : 0;
+            const bestTradePercent = initialBankroll > 0 ? ((parseFloat(bestTrade) / initialBankroll) * 100).toFixed(2) : 0;
+            const monthlyROI = tradingDaysCount > 0 ? ((totalROIPercent / tradingDaysCount) * 30).toFixed(2) : 0;
+            const returns = closedTrades.map(t => parseFloat(t.pnl));
+            const avgReturn = returns.reduce((a, b) => a + b, 0) / returns.length;
+            const stdDev = returns.length > 1 ? Math.sqrt(returns.reduce((sq, n) => sq + Math.pow(n - avgReturn, 2), 0) / (returns.length -1)) : 0;
+            const sharpeRatio = stdDev > 0 ? (avgReturn / stdDev).toFixed(2) : 0;
+            const recoveryFactor = maxDrawdown > 0 ? (totalProfit / (maxDrawdown * initialBankroll / 100)).toFixed(2) : 0;
+            const winPct = winRate / 100;
+            const lossPct = 1 - winPct;
+            const riskOfRuin = winPct > 0 && lossPct > 0 ? (Math.pow(lossPct / winPct, 10) * 100).toFixed(1) : (winPct === 1 ? 0 : 100);
+
+            // Update all stats in UI
+            document.getElementById('totalTrades').textContent = totalTrades;
+            document.getElementById('totalProfit').textContent = `${totalProfit.toFixed(2)}`;
+            document.getElementById('totalProfit').className = `stat-value ${totalProfit >= 0 ? 'profit' : 'loss'}`;
+            document.getElementById('totalROIPercent').textContent = `${totalROIPercent.toFixed(2)}%`;
+            document.getElementById('totalROIPercent').className = `stat-value ${totalROIPercent >= 0 ? 'profit' : 'loss'}`;
+            document.getElementById('winRate').textContent = `${winRate}%`;
+            document.getElementById('avgTrade').textContent = `${avgTrade}`;
+            document.getElementById('avgTradePercent').textContent = `${avgTradePercent}%`;
+            document.getElementById('avgTradePercent').className = `stat-value ${parseFloat(avgTradePercent) >= 0 ? 'profit' : 'loss'}`;
+            document.getElementById('maxDrawdown').textContent = `${maxDrawdown.toFixed(1)}%`;
+            document.getElementById('profitFactor').textContent = profitFactor;
+            document.getElementById('expectedValue').textContent = `${expectedValue}`;
+            document.getElementById('expectedValuePercent').textContent = `${expectedValuePercent}%`;
+            document.getElementById('avgWin').textContent = `${avgWin}`;
+            document.getElementById('avgWinPercent').textContent = `${avgWinPercent}%`;
+            document.getElementById('avgLoss').textContent = `${avgLoss}`;
+            document.getElementById('avgLossPercent').textContent = `${avgLossPercent}%`;
+            document.getElementById('maxWinStreak').textContent = streaks.maxWin;
+            document.getElementById('maxLossStreak').textContent = streaks.maxLoss;
+            document.getElementById('riskOfRuin').textContent = `${riskOfRuin}%`;
+            document.getElementById('riskReward').textContent = riskReward;
+            document.getElementById('sharpeRatio').textContent = sharpeRatio;
+            document.getElementById('recoveryFactor').textContent = recoveryFactor;
+            document.getElementById('tradingDays').textContent = tradingDaysCount;
+            document.getElementById('tradesPerDay').textContent = tradesPerDay;
+            document.getElementById('bestTrade').textContent = `${bestTrade}`;
+            document.getElementById('bestTradePercent').textContent = `${bestTradePercent}%`;
+            document.getElementById('worstTrade').textContent = `${worstTrade}`;
+            document.getElementById('balancePeak').textContent = `${balancePeak.toFixed(2)}`;
+            document.getElementById('balanceLow').textContent = `${balanceLow.toFixed(2)}`;
+            document.getElementById('monthlyROI').textContent = `${monthlyROI}%`;
+
+            updateEquityChart(balanceHistory);
+            updateMonthlyChart(closedTrades);
+            updateBankrollDisplay();
+        }
+
+        function resetStats() {
+            const fields = [
+                'totalTrades', 'totalProfit', 'totalROIPercent', 'winRate', 'avgTrade', 
+                'avgTradePercent', 'maxDrawdown', 'profitFactor', 'expectedValue', 
+                'expectedValuePercent', 'avgWin', 'avgWinPercent', 'avgLoss', 'avgLossPercent',
+                'maxWinStreak', 'maxLossStreak', 'riskOfRuin', 'riskReward', 'sharpeRatio',
+                'recoveryFactor', 'tradingDays', 'tradesPerDay', 'bestTrade', 'bestTradePercent',
+                'worstTrade', 'balancePeak', 'balanceLow', 'monthlyROI'
+            ];
+            
+            fields.forEach(field => {
+                const element = document.getElementById(field);
+                if (element) {
+                    if (field === 'totalTrades' || field === 'tradingDays' || field === 'maxWinStreak' || field === 'maxLossStreak') {
+                        element.textContent = '0';
+                    } else if (field === 'riskReward') {
+                        element.textContent = '1:0';
+                    } else if (field.includes('Percent') || field === 'winRate' || field === 'maxDrawdown' || field === 'riskOfRuin' || field === 'monthlyROI') {
+                        element.textContent = '0.00%';
+                    } else if (field.includes('Profit') || field.includes('Trade') || field.includes('Value') || field.includes('balance')) {
+                        element.textContent = '$0.00';
+                    } else {
+                        element.textContent = '0.00';
+                    }
+                    element.className = element.className.replace(/profit|loss|success|danger|warning/g, '').trim();
+                }
+            });
+        }
+
+        function calculateStreaks(trades) {
+            let maxWinStreak = 0;
+            let maxLossStreak = 0;
+            let currentWinStreak = 0;
+            let currentLossStreak = 0;
+
+            trades.forEach(trade => {
+                const pnl = parseFloat(trade.pnl);
+                if (pnl > 0) {
+                    currentWinStreak++;
+                    currentLossStreak = 0;
+                    maxWinStreak = Math.max(maxWinStreak, currentWinStreak);
+                } else if (pnl < 0) {
+                    currentLossStreak++;
+                    currentWinStreak = 0;
+                    maxLossStreak = Math.max(maxLossStreak, currentLossStreak);
+                }
+            });
+
+            return { maxWin: maxWinStreak, maxLoss: maxLossStreak };
+        }
+
+        function calculateTradingDays(trades) {
+            const dates = [...new Set(trades.map(t => new Date(t.entryTime).toDateString()))];
+            return dates.length;
+        }
+
+        function updateEquityChart(balanceHistory) {
+            const canvas = document.getElementById('equityChart');
+            const ctx = canvas.getContext('2d');
+            
+            canvas.width = canvas.offsetWidth;
+            canvas.height = canvas.offsetHeight;
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            if (trades.length === 0) return;
+            
+            const monthlyData = {};
+            trades.forEach(trade => {
+                const date = new Date(trade.entryTime);
+                const monthKey = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
+                monthlyData[monthKey] = (monthlyData[monthKey] || 0) + parseFloat(trade.pnl);
+            });
+            
+            const months = Object.keys(monthlyData).sort();
+            const values = months.map(month => monthlyData[month]);
+            
+            if (values.length === 0) return;
+            
+            const maxValue = Math.max(...values, 0);
+            const minValue = Math.min(...values, 0);
+            const range = maxValue - minValue || 1;
+            const padding = 40;
+            const barWidth = (canvas.width - 2 * padding) / values.length * 0.8;
+            
+            values.forEach((value, index) => {
+                const x = padding + (index + 0.1) * (canvas.width - 2 * padding) / values.length;
+                const barHeight = Math.abs(value) / range * (canvas.height - 2 * padding);
+                
+                if (value >= 0) {
+                    const y = canvas.height - padding - ((0 - minValue) / range) * (canvas.height - 2 * padding);
+                    ctx.fillStyle = '#28a745';
+                    ctx.fillRect(x, y - barHeight, barWidth, barHeight);
+                } else {
+                    const y = canvas.height - padding - ((0 - minValue) / range) * (canvas.height - 2 * padding);
+                    ctx.fillStyle = '#dc3545';
+                    ctx.fillRect(x, y, barWidth, barHeight);
+                }
+            });
+        }
+
+        function clearForm() {
+            document.getElementById('entryTime').value = '';
+            document.getElementById('entryPrice').value = '';
+            document.getElementById('stopLoss').value = '';
+            document.getElementById('takeProfit').value = '';
+            setDefaultTime();
+        }
+
+        function setDefaultTime() {
+            const now = new Date();
+            now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+            document.getElementById('entryTime').value = now.toISOString().slice(0, 16);
+        }
+
+        function updateConnectionStatus() {
+            const status = document.getElementById('connectionStatus');
+            const syncStatus = document.querySelector('.sync-status');
+            
+            if (useLocalStorageOnly) {
+                status.textContent = 'Local Storage';
+                syncStatus.style.background = '#ffc107';
+            } else if (auth && auth.currentUser) {
+                status.textContent = 'Online';
+                syncStatus.style.background = '#28a745';
+            } else {
+                status.textContent = 'Offline';
+                syncStatus.style.background = '#dc3545';
+            }
+        }
+
+        function updateUserDisplay() {
+            document.getElementById('userName').textContent = currentUser.name;
+            document.getElementById('userEmail').textContent = currentUser.email;
+            document.getElementById('userAvatar').textContent = currentUser.avatar;
+            document.getElementById('currentUserId').textContent = currentUser.uid || 'Local';
+        }
+
+        function updateBankrollDisplay() {
+            const closedTrades = trades.filter(t => t.status === 'Closed');
+            const totalPnL = closedTrades.reduce((sum, t) => sum + parseFloat(t.pnl || 0), 0);
+            const currentBalance = initialBankroll + totalPnL;
+            const totalROI = initialBankroll > 0 ? ((totalPnL / initialBankroll) * 100) : 0;
+            
+            document.getElementById('currentBalance').textContent = `${currentBalance.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+            document.getElementById('totalROI').textContent = `${totalROI.toFixed(2)}%`;
+            document.getElementById('totalROI').style.color = totalROI >= 0 ? '#28a745' : '#dc3545';
+        }
+
+        // Helper Functions
+        window.updateBankroll = function() {
+            initialBankroll = parseFloat(document.getElementById('initialBankroll').value) || 10000;
+            if (useLocalStorageOnly || !currentUser.uid) {
+                saveToLocalStorage();
+            } else {
+                saveUserDataToFirestore();
+            }
+            updateStats();
+            updateBankrollDisplay();
+        };
+
+        window.syncData = async function() {
+            if (useLocalStorageOnly) {
+                saveToLocalStorage();
+                showNotification('💾 Data saved to local storage!');
+            } else {
+                showNotification('🔄 Syncing data...');
+                await saveUserDataToFirestore();
+                showNotification('✅ Data synced successfully!');
+            }
+        };
+
+        window.exportToCSV = function() {
+            if (trades.length === 0) {
+                showNotification('❌ No trade data to export.', 'error');
+                return;
+            }
+
+            const headers = ['ID', 'Date/Time', 'Type', 'Entry Price', 'Exit Price', 'Lot Size', 'Stop Loss', 'Take Profit', 'P&L (Pips)', 'P&L ($)','Balance', 'Status'];
+            const csvContent = [
+                headers.join(','),
+                ...trades.map(trade => {
+                    const pnlPercent = initialBankroll > 0 && trade.pnl !== null ? ((parseFloat(trade.pnl) / initialBankroll) * 100).toFixed(2) : '';
+                    let tempRunningBalance = initialBankroll;
+                    const tradesUpToCurrent = trades.slice(0, trades.indexOf(trade) + 1);
+                    tradesUpToCurrent.forEach(t => {
+                        if (t.status === 'Closed' && t.pnl !== null) {
+                            tempRunningBalance += parseFloat(t.pnl);
+                        }
+                    });
+                    const balanceDisplay = trade.status === 'Closed' ? tempRunningBalance.toFixed(2) : '';
+
+                    return [
+                        trade.id,
+                        `"${new Date(trade.entryTime).toLocaleString('en-US')}"`,
+                        trade.type,
+                        trade.entryPrice,
+                        trade.exitPrice !== null ? trade.exitPrice : '',
+                        trade.lotSize,
+                        trade.stopLoss !== null ? trade.stopLoss : '',
+                        trade.takeProfit !== null ? trade.takeProfit : '',
+                        trade.pips !== null ? trade.pips : '',
+                        trade.pnl !== null ? trade.pnl : '',
+                        balanceDisplay,
+                        trade.status
+                    ].join(',');
+                })
+            ].join('\n');
+
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            const url = URL.createObjectURL(blob);
+            link.setAttribute('href', url);
+            link.setAttribute('download', `GBP_USD_Trade_Record_${new Date().toISOString().split('T')[0]}.csv`);
+            link.style.visibility = 'hidden';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            showNotification('✅ CSV exported successfully!');
+        };
+
+        window.showSettings = async function() {
+            showInputModal('Enter your name:', (newName) => {
+                if (newName && newName.trim() !== '') {
+                    currentUser.name = newName.trim();
+                    currentUser.avatar = newName.trim().charAt(0).toUpperCase();
+                    updateUserDisplay();
+                    if (useLocalStorageOnly || !currentUser.uid) {
+                        saveToLocalStorage();
+                    } else {
+                        saveUserDataToFirestore();
+                    }
+                    showNotification('✅ Settings updated!');
+                } else {
+                    showNotification('❌ Name cannot be empty.', 'error');
+                }
+            }, currentUser.name);
+        };
+
+        window.signOut = async function() {
+            if (useLocalStorageOnly) {
+                showNotification('📦 You are using local storage only mode. No sign out needed.');
+                return;
+            }
+            showConfirmModal('Are you sure you want to sign out?', async () => {
+                try {
+                    if (auth && auth.currentUser) {
+                        await firebaseSignOut(auth);
+                        showNotification('👋 Signed out successfully!');
+                    } else {
+                        showNotification('Already signed out.');
+                    }
+                } catch (error) {
+                    console.error("Error signing out:", error);
+                    showNotification('❌ Failed to sign out.', 'error');
+                }
+            });
+        };
+
+        window.closeTradePrompt = function(id) {
+            showInputModal('Enter Exit Price:', (exitPrice) => {
+                if (exitPrice && !isNaN(exitPrice)) {
+                    closeTrade(id, parseFloat(exitPrice));
+                } else {
+                    showNotification('❌ Invalid Exit Price.', 'error');
+                }
+            });
+        };
+
+        // Modal Functions
+        function showConfirmModal(message, onConfirm) {
+            const modalHtml = `
+                <div id="customModal" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); display: flex; justify-content: center; align-items: center; z-index: 2000;">
+                    <div style="background: #3a3a3a; padding: 30px; border-radius: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.5); text-align: center; color: white; max-width: 400px; width: 90%;">
+                        <p style="margin-bottom: 20px; font-size: 1.1em;">${message}</p>
+                        <button id="modalConfirmBtn" class="btn btn-danger" style="margin-right: 10px;">Confirm</button>
+                        <button id="modalCancelBtn" class="btn btn-primary">Cancel</button>
+                    </div>
+                </div>
+            `;
+            document.body.insertAdjacentHTML('beforeend', modalHtml);
+
+            document.getElementById('modalConfirmBtn').onclick = () => {
+                document.getElementById('customModal').remove();
+                onConfirm();
+            };
+            document.getElementById('modalCancelBtn').onclick = () => {
+                document.getElementById('customModal').remove();
+            };
+        }
+
+        function showInputModal(message, onInput, defaultValue = '') {
+            const modalHtml = `
+                <div id="customModal" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); display: flex; justify-content: center; align-items: center; z-index: 2000;">
+                    <div style="background: #3a3a3a; padding: 30px; border-radius: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.5); text-align: center; color: white; max-width: 400px; width: 90%;">
+                        <p style="margin-bottom: 20px; font-size: 1.1em;">${message}</p>
+                        <input type="text" id="modalInput" class="form-control" value="${defaultValue}" style="width: calc(100% - 20px); margin-bottom: 20px;">
+                        <button id="modalOkBtn" class="btn btn-success" style="margin-right: 10px;">OK</button>
+                        <button id="modalCancelBtn" class="btn btn-primary">Cancel</button>
+                    </div>
+                </div>
+            `;
+            document.body.insertAdjacentHTML('beforeend', modalHtml);
+
+            const modalInput = document.getElementById('modalInput');
+            modalInput.focus();
+
+            document.getElementById('modalOkBtn').onclick = () => {
+                const inputValue = modalInput.value;
+                document.getElementById('customModal').remove();
+                onInput(inputValue);
+            };
+            document.getElementById('modalCancelBtn').onclick = () => {
+                document.getElementById('customModal').remove();
+                onInput(null);
+            };
+            modalInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    document.getElementById('modalOkBtn').click();
+                }
+            });
+        }
+
+        // Initialize on load
+        window.onload = function() {
+            setDefaultTime();
+            if (!savedConfig) {
+                loadLocalData();
+            }
+        };
+    </script>
+</body>
+</html>0, 0, canvas.width, canvas.height);
+            
+            if (balanceHistory.length === 0) return;
+            
+            const maxValue = Math.max(...balanceHistory);
+            const minValue = Math.min(...balanceHistory);
+            const range = maxValue - minValue || 1;
+            const padding = 40;
+            
+            const initialY = canvas.height - padding - ((initialBankroll - minValue) / range) * (canvas.height - 2 * padding);
+            ctx.strokeStyle = '#6c757d';
+            ctx.lineWidth = 1;
+            ctx.setLineDash([3, 3]);
+            ctx.beginPath();
+            ctx.moveTo(padding, initialY);
+            ctx.lineTo(canvas.width - padding, initialY);
+            ctx.stroke();
+            ctx.setLineDash([]);
+            
+            ctx.strokeStyle = '#007bff';
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+            
+            balanceHistory.forEach((balance, index) => {
+                const x = padding + (index / (balanceHistory.length - 1)) * (canvas.width - 2 * padding);
+                const y = canvas.height - padding - ((balance - minValue) / range) * (canvas.height - 2 * padding);
+                
+                if (index === 0) {
+                    ctx.moveTo(x, y);
+                } else {
+                    ctx.lineTo(x, y);
+                }
+            });
+            
+            ctx.stroke();
+            
+            ctx.globalAlpha = 0.1;
+            ctx.fillStyle = '#007bff';
+            ctx.fill();
+            ctx.globalAlpha = 1;
+        }
+
+        function updateMonthlyChart(trades) {
+            const canvas = document.getElementById('monthlyChart');
+            const ctx = canvas.getContext('2d');
+            
+            canvas.width = canvas.offsetWidth;
+            canvas.height = canvas.offsetHeight;
+            ctx.clearRect(
