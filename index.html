@@ -1377,6 +1377,54 @@ Example:
             canvas.height = canvas.offsetHeight;
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             
+            if (balanceHistory.length === 0) return;
+            
+            const maxValue = Math.max(...balanceHistory);
+            const minValue = Math.min(...balanceHistory);
+            const range = maxValue - minValue || 1;
+            const padding = 40;
+            
+            const initialY = canvas.height - padding - ((initialBankroll - minValue) / range) * (canvas.height - 2 * padding);
+            ctx.strokeStyle = '#6c757d';
+            ctx.lineWidth = 1;
+            ctx.setLineDash([3, 3]);
+            ctx.beginPath();
+            ctx.moveTo(padding, initialY);
+            ctx.lineTo(canvas.width - padding, initialY);
+            ctx.stroke();
+            ctx.setLineDash([]);
+            
+            ctx.strokeStyle = '#007bff';
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+            
+            balanceHistory.forEach((balance, index) => {
+                const x = padding + (index / (balanceHistory.length - 1)) * (canvas.width - 2 * padding);
+                const y = canvas.height - padding - ((balance - minValue) / range) * (canvas.height - 2 * padding);
+                
+                if (index === 0) {
+                    ctx.moveTo(x, y);
+                } else {
+                    ctx.lineTo(x, y);
+                }
+            });
+            
+            ctx.stroke();
+            
+            ctx.globalAlpha = 0.1;
+            ctx.fillStyle = '#007bff';
+            ctx.fill();
+            ctx.globalAlpha = 1;
+        }
+
+        function updateMonthlyChart(trades) {
+            const canvas = document.getElementById('monthlyChart');
+            const ctx = canvas.getContext('2d');
+            
+            canvas.width = canvas.offsetWidth;
+            canvas.height = canvas.offsetHeight;
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
             if (trades.length === 0) return;
             
             const monthlyData = {};
@@ -1644,52 +1692,4 @@ Example:
         };
     </script>
 </body>
-</html>0, 0, canvas.width, canvas.height);
-            
-            if (balanceHistory.length === 0) return;
-            
-            const maxValue = Math.max(...balanceHistory);
-            const minValue = Math.min(...balanceHistory);
-            const range = maxValue - minValue || 1;
-            const padding = 40;
-            
-            const initialY = canvas.height - padding - ((initialBankroll - minValue) / range) * (canvas.height - 2 * padding);
-            ctx.strokeStyle = '#6c757d';
-            ctx.lineWidth = 1;
-            ctx.setLineDash([3, 3]);
-            ctx.beginPath();
-            ctx.moveTo(padding, initialY);
-            ctx.lineTo(canvas.width - padding, initialY);
-            ctx.stroke();
-            ctx.setLineDash([]);
-            
-            ctx.strokeStyle = '#007bff';
-            ctx.lineWidth = 3;
-            ctx.beginPath();
-            
-            balanceHistory.forEach((balance, index) => {
-                const x = padding + (index / (balanceHistory.length - 1)) * (canvas.width - 2 * padding);
-                const y = canvas.height - padding - ((balance - minValue) / range) * (canvas.height - 2 * padding);
-                
-                if (index === 0) {
-                    ctx.moveTo(x, y);
-                } else {
-                    ctx.lineTo(x, y);
-                }
-            });
-            
-            ctx.stroke();
-            
-            ctx.globalAlpha = 0.1;
-            ctx.fillStyle = '#007bff';
-            ctx.fill();
-            ctx.globalAlpha = 1;
-        }
-
-        function updateMonthlyChart(trades) {
-            const canvas = document.getElementById('monthlyChart');
-            const ctx = canvas.getContext('2d');
-            
-            canvas.width = canvas.offsetWidth;
-            canvas.height = canvas.offsetHeight;
-            ctx.clearRect(
+</html>
