@@ -794,7 +794,9 @@ Example:
                 showConfigModal();
             }
         } else {
+            // Show config modal but also load local data as fallback
             showConfigModal();
+            loadLocalData();
         }
 
         function showConfigModal() {
@@ -828,41 +830,73 @@ Example:
 
         function initializeFirebase(firebaseConfig) {
             try {
+                // Validate required Firebase config fields
+                const requiredFields = ['apiKey', 'authDomain', 'projectId'];
+                for (const field of requiredFields) {
+                    if (!firebaseConfig[field]) {
+                        throw new Error(`Missing required Firebase config field: ${field}`);
+                    }
+                }
+
                 app = initializeApp(firebaseConfig);
                 db = getFirestore(app);
                 auth = getAuth(app);
                 
-                // Set up auth state listener
+                console.log('Firebase initialized successfully');
+                
+                // Set up auth state listener with better error handling
                 onAuthStateChanged(auth, async (user) => {
-                    if (user) {
-                        currentUser.uid = user.uid;
-                        if (user.isAnonymous) {
-                            currentUser.name = `User ${user.uid.substring(0, 6)}`;
-                            currentUser.email = `anonymous-${user.uid.substring(0, 6)}@example.com`;
-                            currentUser.avatar = currentUser.name.charAt(0).toUpperCase();
+                    try {
+                        if (user) {
+                            currentUser.uid = user.uid;
+                            if (user.isAnonymous) {
+                                currentUser.name = `User ${user.uid.substring(0, 6)}`;
+                                currentUser.email = `anonymous-${user.uid.substring(0, 6)}@example.com`;
+                                currentUser.avatar = currentUser.name.charAt(0).toUpperCase();
+                            } else {
+                                currentUser.name = user.displayName || `User ${user.uid.substring(0, 6)}`;
+                                currentUser.email = user.email || `user-${user.uid.substring(0, 6)}@example.com`;
+                                currentUser.avatar = currentUser.name.charAt(0).toUpperCase();
+                            }
+                            updateUserDisplay();
+                            await loadDataFromFirestore();
+                            showNotification('✅ Signed in and data loaded!');
                         } else {
-                            currentUser.name = user.displayName || `User ${user.uid.substring(0, 6)}`;
-                            currentUser.email = user.email || `user-${user.uid.substring(0, 6)}@example.com`;
-                            currentUser.avatar = currentUser.name.charAt(0).toUpperCase();
+                            resetToGuest();
+                            showNotification('🚪 Signed out or no user logged in.');
                         }
-                        updateUserDisplay();
-                        loadDataFromFirestore();
-                        showNotification('✅ Signed in and data loaded!');
-                    } else {
-                        resetToGuest();
-                        showNotification('🚪 Signed out or no user logged in.');
+                        updateConnectionStatus();
+                    } catch (error) {
+                        console.error("Error in auth state change handler:", error);
+                        showNotification('❌ Error handling authentication state change.', 'error');
                     }
-                    updateConnectionStatus();
+                }, (error) => {
+                    console.error("Auth state change listener error:", error);
+                    showNotification('❌ Authentication listener error.', 'error');
                 });
 
-                // Auto sign in anonymously
+                // Auto sign in anonymously with better error handling
                 signInAnonymously(auth).catch(error => {
-                    console.error("Error signing in anonymously:", error);
-                    showNotification('❌ Failed to sign in. Check your network connection.', 'error');
+                    console.error("Error signing in anonymously:", error.code, error.message);
+                    if (error.code === 'auth/network-request-failed') {
+                        showNotification('❌ Network error. Please check your internet connection.', 'error');
+                    } else if (error.code === 'auth/operation-not-allowed') {
+                        showNotification('❌ Anonymous authentication is not enabled. Please enable it in Firebase Console.', 'error');
+                    } else {
+                        showNotification('❌ Failed to sign in. Check your Firebase configuration.', 'error');
+                    }
+                    // Fallback to local storage mode
+                    useLocalStorageOnly = true;
+                    loadLocalData();
+                    updateConnectionStatus();
                 });
             } catch (error) {
                 console.error("Error initializing Firebase:", error);
                 showNotification('❌ Failed to initialize Firebase. Please check your configuration.', 'error');
+                // Fallback to local storage mode
+                useLocalStorageOnly = true;
+                loadLocalData();
+                updateConnectionStatus();
             }
         }
 
@@ -932,60 +966,86 @@ Example:
         }
 
         // Firebase Data Functions
-        function loadDataFromFirestore() {
+        async function loadDataFromFirestore() {
             if (!currentUser.uid || useLocalStorageOnly) {
                 console.warn("No user ID available or using local storage only.");
                 return;
             }
 
-            const userDocRef = doc(db, `users/${currentUser.uid}/settings/user_data`);
-            const tradesCollectionRef = collection(db, `users/${currentUser.uid}/trades`);
+            try {
+                const userDocRef = doc(db, `users/${currentUser.uid}/settings/user_data`);
+                const tradesCollectionRef = collection(db, `users/${currentUser.uid}/trades`);
 
-            if (unsubscribeFromUserData) {
-                unsubscribeFromUserData();
-            }
-            unsubscribeFromUserData = onSnapshot(userDocRef, (docSnap) => {
-                if (docSnap.exists()) {
-                    const data = docSnap.data();
-                    if (data.name) currentUser.name = data.name;
-                    if (data.email) currentUser.email = data.email;
-                    if (data.avatar) currentUser.avatar = data.avatar;
-                    if (data.initialBankroll) initialBankroll = data.initialBankroll;
-                    document.getElementById('initialBankroll').value = initialBankroll;
-                } else {
-                    setDoc(userDocRef, {
-                        name: currentUser.name,
-                        email: currentUser.email,
-                        avatar: currentUser.avatar,
-                        initialBankroll: initialBankroll
-                    }).catch(error => {
-                        console.error("Error creating initial user data:", error);
-                    });
+                if (unsubscribeFromUserData) {
+                    unsubscribeFromUserData();
                 }
-                updateUserDisplay();
-                updateBankrollDisplay();
-            }, (error) => {
-                console.error("Error listening to user settings:", error);
-                showNotification('❌ Real-time user settings updates failed.', 'error');
-            });
-
-            if (unsubscribeFromTrades) {
-                unsubscribeFromTrades();
-            }
-            unsubscribeFromTrades = onSnapshot(query(tradesCollectionRef), (snapshot) => {
-                const fetchedTrades = [];
-                snapshot.forEach(doc => {
-                    fetchedTrades.push({ id: doc.id, ...doc.data() });
+                unsubscribeFromUserData = onSnapshot(userDocRef, (docSnap) => {
+                    try {
+                        if (docSnap.exists()) {
+                            const data = docSnap.data();
+                            if (data.name) currentUser.name = data.name;
+                            if (data.email) currentUser.email = data.email;
+                            if (data.avatar) currentUser.avatar = data.avatar;
+                            if (data.initialBankroll) initialBankroll = data.initialBankroll;
+                            document.getElementById('initialBankroll').value = initialBankroll;
+                        } else {
+                            // Create initial user data document
+                            setDoc(userDocRef, {
+                                name: currentUser.name,
+                                email: currentUser.email,
+                                avatar: currentUser.avatar,
+                                initialBankroll: initialBankroll
+                            }).catch(error => {
+                                console.error("Error creating initial user data:", error);
+                            });
+                        }
+                        updateUserDisplay();
+                        updateBankrollDisplay();
+                    } catch (error) {
+                        console.error("Error processing user data snapshot:", error);
+                    }
+                }, (error) => {
+                    console.error("Error listening to user settings:", error);
+                    if (error.code === 'permission-denied') {
+                        showNotification('❌ Permission denied. Check Firestore rules.', 'error');
+                    } else if (error.code === 'unavailable') {
+                        showNotification('⚠️ Firestore temporarily unavailable. Using local data.', 'error');
+                    } else {
+                        showNotification('❌ Real-time user settings updates failed.', 'error');
+                    }
                 });
-                trades = fetchedTrades.sort((a, b) => new Date(a.entryTime) - new Date(b.entryTime));
-                updateTable();
-                updateStats();
-                updateBankrollDisplay();
-                showNotification('🔄 Trades updated in real-time!');
-            }, (error) => {
-                console.error("Error listening to trades:", error);
-                showNotification('❌ Real-time trade updates failed.', 'error');
-            });
+
+                if (unsubscribeFromTrades) {
+                    unsubscribeFromTrades();
+                }
+                unsubscribeFromTrades = onSnapshot(query(tradesCollectionRef), (snapshot) => {
+                    try {
+                        const fetchedTrades = [];
+                        snapshot.forEach(doc => {
+                            fetchedTrades.push({ id: doc.id, ...doc.data() });
+                        });
+                        trades = fetchedTrades.sort((a, b) => new Date(a.entryTime) - new Date(b.entryTime));
+                        updateTable();
+                        updateStats();
+                        updateBankrollDisplay();
+                        console.log(`Loaded ${trades.length} trades from Firestore`);
+                    } catch (error) {
+                        console.error("Error processing trades snapshot:", error);
+                    }
+                }, (error) => {
+                    console.error("Error listening to trades:", error);
+                    if (error.code === 'permission-denied') {
+                        showNotification('❌ Permission denied. Check Firestore rules.', 'error');
+                    } else if (error.code === 'unavailable') {
+                        showNotification('⚠️ Firestore temporarily unavailable. Using local data.', 'error');
+                    } else {
+                        showNotification('❌ Real-time trade updates failed.', 'error');
+                    }
+                });
+            } catch (error) {
+                console.error("Error setting up Firestore listeners:", error);
+                showNotification('❌ Failed to connect to Firestore.', 'error');
+            }
         }
 
         async function saveUserDataToFirestore() {
@@ -1685,9 +1745,17 @@ Example:
 
         // Initialize on load
         window.onload = function() {
+            console.log('Application starting...');
             setDefaultTime();
+            
+            // Initialize connection status
+            updateConnectionStatus();
+            
+            // If no saved Firebase config, load local data immediately
             if (!savedConfig) {
+                console.log('No Firebase config found, loading local data');
                 loadLocalData();
+                updateConnectionStatus();
             }
         };
     </script>
